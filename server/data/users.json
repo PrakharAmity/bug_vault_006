@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "name": "Alex Morgan",
+    "email": "alex@example.com",
+    "password": "password123",
+    "role": "admin",
+    "createdAt": "2024-01-15T08:30:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Sarah Connor",
+    "email": "sarah@example.com",
+    "password": "terminator2024",
+    "role": "developer",
+    "createdAt": "2024-01-18T10:12:00.000Z"
+  },
+  {
+    "id": 3,
+    "name": "David Miller",
+    "email": "david@example.com",
+    "password": "davidsecurepass",
+    "role": "developer",
+    "createdAt": "2024-02-01T14:45:00.000Z"
+  },
+  {
+    "id": 4,
+    "name": "Elena Rostova",
+    "email": "elena@example.com",
+    "password": "elenapassword99",
+    "role": "security_analyst",
+    "createdAt": "2024-02-10T11:20:00.000Z"
+  },
+  {
+    "id": 5,
+    "name": "James Wilson",
+    "email": "james@example.com",
+    "password": "wilsonPass!45",
+    "role": "developer",
+    "createdAt": "2024-02-14T09:05:00.000Z"
+  },
+  {
+    "id": 6,
+    "name": "Maya Patel",
+    "email": "maya@example.com",
+    "password": "mayasecret2024",
+    "role": "qa_engineer",
+    "createdAt": "2024-02-22T16:40:00.000Z"
+  },
+  {
+    "id": 7,
+    "name": "Lucas Vance",
+    "email": "lucas@example.com",
+    "password": "vancecodebase1",
+    "role": "devops",
+    "createdAt": "2024-03-01T12:00:00.000Z"
+  },
+  {
+    "id": 8,
+    "name": "Hanna Schmidt",
+    "email": "hanna@example.com",
+    "password": "berlinBerlin#8",
+    "role": "developer",
+    "createdAt": "2024-03-05T08:15:00.000Z"
+  },
+  {
+    "id": 9,
+    "name": "Marcus Wright",
+    "email": "marcus@example.com",
+    "password": "marcuswright44",
+    "role": "product_manager",
+    "createdAt": "2024-03-12T13:30:00.000Z"
+  },
+  {
+    "id": 10,
+    "name": "Chloe Bennett",
+    "email": "chloe@example.com",
+    "password": "shieldDaisy#10",
+    "role": "developer",
+    "createdAt": "2024-03-20T17:25:00.000Z"
+  },
+  {
+    "id": 11,
+    "name": "Kenji Sato",
+    "email": "kenji@example.com",
+    "password": "tokyocoding2024",
+    "role": "frontend_lead",
+    "createdAt": "2024-04-02T10:00:00.000Z"
+  },
+  {
+    "id": 12,
+    "name": "Olivia Taylor",
+    "email": "olivia@example.com",
+    "password": "liviataylor99!",
+    "role": "designer",
+    "createdAt": "2024-04-10T14:10:00.000Z"
+  },
+  {
+    "id": 13,
+    "name": "Liam Anderson",
+    "email": "liam@example.com",
+    "password": "andersondistrib2",
+    "role": "architect",
+    "createdAt": "2024-04-15T09:40:00.000Z"
+  },
+  {
+    "id": 14,
+    "name": "Fatima Zahra",
+    "email": "fatima@example.com",
+    "password": "casablancadev7",
+    "role": "security_engineer",
+    "createdAt": "2024-04-20T15:55:00.000Z"
+  },
+  {
+    "id": 15,
+    "name": "Ethan Brooks",
+    "email": "ethan@example.com",
+    "password": "brooksvalley2024",
+    "role": "developer",
+    "createdAt": "2024-05-01T11:15:00.000Z"
+  },
+  {
+    "id": 16,
+    "name": "Sophia Chen",
+    "email": "sophia@example.com",
+    "password": "algorithmQueen3",
+    "role": "data_scientist",
+    "createdAt": "2024-05-08T13:00:00.000Z"
+  },
+  {
+    "id": 17,
+    "name": "Noah Williams",
+    "email": "noah@example.com",
+    "password": "cloudengineer#17",
+    "role": "devops",
+    "createdAt": "2024-05-15T08:50:00.000Z"
+  },
+  {
+    "id": 18,
+    "name": "Amara Diallo",
+    "email": "amara@example.com",
+    "password": "dakarSystem2024",
+    "role": "backend_lead",
+    "createdAt": "2024-05-22T12:35:00.000Z"
+  },
+  {
+    "id": 19,
+    "name": "Gabriel Santos",
+    "email": "gabriel@example.com",
+    "password": "riofullstack88",
+    "role": "developer",
+    "createdAt": "2024-06-01T16:10:00.000Z"
+  },
+  {
+    "id": 20,
+    "name": "Zoe Kravitz",
+    "email": "zoe@example.com",
+    "password": "batcaveSecurity1",
+    "role": "security_analyst",
+    "createdAt": "2024-06-10T10:45:00.000Z"
+  }
+]

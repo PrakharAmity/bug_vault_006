@@ -1,0 +1,13 @@
+{
+  "name": "bugvault",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BugVault - Debugging Playground with 6 intentional bugs",
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev": "node scripts/dev.js",
+    "test": "node ./server/node_modules/jest/bin/jest.js --config ./server/jest.config.js --runInBand",
+    "install:all": "npm --prefix server install && npm --prefix client install"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "BugVault",
+  "description": "Small debugging challenge website with six intentional backend bugs.",
+  "runtime_config": {
+    "runtime_type": "node-react"
+  }
+}

@@ -1,252 +1,66 @@
-# BugVault — Debugging Playground 🛡️
+# BugVault — Developer Security & API Playground
 
-BugVault is a lightweight, self-contained full-stack debugging challenge website intentionally built with **EXACTLY 6 realistic bugs**. It is designed for interview debugging rounds, hackathons, and backend practice.
-
-Developers explore the codebase, observe unexpected behavior in the interactive dashboard, investigate the endpoints and middleware, and write fixes until all tests pass.
+BugVault is an interactive full-stack debugging platform and security testing dashboard designed for developers, interview debugging rounds, and backend engineering practice. It allows developers to explore realistic API behaviors, monitor sliding window rate limiting, inspect session authentication and JWT lifecycles, and diagnose access control vulnerabilities.
 
 ---
 
-## Tech Stack
+## 1. Application Overview
 
-- **Frontend:**
-  - React 19
-  - Vite
-  - Tailwind CSS (Dark Developer Dashboard theme)
-  - Axios (with authorization interceptors & rate-limit event bus)
-  - React Router DOM
-  - Lucide React (Icons)
-- **Backend:**
-  - Node.js 22
-  - Express.js
-  - JWT Authentication (`jsonwebtoken`)
-  - `bcrypt` (misused in authentication logic)
-  - CORS & Helmet
-- **Database:**
-  - Local JSON database (`server/data/users.json`) with 20 records.
-  - 100% offline — zero external database dependencies.
-- **Testing:**
-  - Jest & Supertest
-  - Custom JSON reporter (pure JSON stdout output)
+### Core Functionality
+- **Session Authentication & Security Gateway**: Secure user login with JWT tokens, credential validation, and brute-force protection.
+- **Sliding Window Rate Limiter**: Configurable IP-based rate limiting to prevent API abuse, displaying real-time countdowns and remaining request quotas.
+- **User Directory & Pagination**: Browse system users with search filtering, multi-page pagination, and limit controls.
+- **Profile Authorization & Inspection**: View user profile details with role permissions and token claim validation.
+- **Live Metrics & Request Timeline**: Real-time developer dashboard tracking request frequencies, active sessions, and security event logs.
+
+### Technology Stack
+- **Framework**: React 19 (Frontend), Express 4 (Backend)
+- **Build Tool / Dev Server**: Vite 6, Node.js
+- **Styling**: Tailwind CSS (Dark Developer Dashboard theme)
+- **Testing**: Jest, Supertest
+- **Data**: Bundled local JSON dataset (`server/data/users.json`)
 
 ---
 
-## Directory Structure
+## 2. Debugging Challenge
 
-```
-bugvault/
-├── challenge.json               # Runtime challenge configuration
-├── package.json                 # Unified root orchestration scripts
-├── README.md                    # Project documentation
-├── scripts/
-│   └── dev.js                   # Concurrent development runner
-├── client/                      # React 19 Frontend
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   └── src/
-│       ├── App.jsx              # App root and client routes
-│       ├── main.jsx             # React entry point
-│       ├── index.css            # Tailwind directives and styling
-│       ├── components/
-│       │   ├── Navbar.jsx       # Global navigation and status
-│       │   └── RequestCounter.jsx # Sliding Window Timeline visualizer
-│       ├── pages/
-│       │   ├── Login.jsx        # Login page with rate limit toast
-│       │   ├── Dashboard.jsx    # Session metrics & request timeline
-│       │   └── Users.jsx        # Paginated users directory & IDOR modal
-│       └── services/
-│           └── api.js           # Axios API client & rate limit listener
-└── server/                      # Express Backend
-    ├── server.js                # Server entry point
-    ├── jest.config.js           # Jest configuration
-    ├── package.json
-    ├── data/
-    │   └── users.json           # 20 fake user records
-    ├── middleware/
-    │   ├── auth.js              # JWT verification middleware (Bug 2)
-    │   └── rateLimiter.js       # Sliding window rate limiter (Bug 1)
-    ├── routes/
-    │   ├── auth.js              # Login route (Bug 4, Bug 6)
-    │   ├── profile.js           # Profile routes (Bug 3)
-    │   └── users.js             # Paginated users route (Bug 5)
-    ├── utils/
-    │   └── jwt.js               # JWT signing and decode helpers
-    └── tests/
-        ├── auth.test.js         # Tests for Bug 2, Bug 4, Bug 6
-        ├── rateLimiter.test.js  # Tests for Bug 1
-        ├── profile.test.js      # Tests for Bug 3
-        ├── pagination.test.js   # Tests for Bug 5
-        ├── reporter.js          # Custom Jest JSON reporter
-        └── run-tests.js         # Pure JSON test execution script
-```
+QA engineers and security auditors have flagged several issues in the BugVault platform. Your goal is to investigate the codebase, reproduce each bug, and implement the necessary fixes so that all automated test suites pass.
+
+### Reported Issues & Tasks:
+
+#### Issue 1: Sliding Window Rate Limiter Allows Excess Requests
+- **User Symptom**: The rate limiter is configured to allow a maximum of 5 requests per 60-second window, but when sending rapid requests, the 6th request unexpectedly succeeds instead of receiving an HTTP 429 (`Too Many Requests`) response, and the window resets prematurely.
+- **Task**: Fix the sliding window calculation and boundary condition in `server/middleware/rateLimiter.js` so that requests exceeding 5 within 60 seconds are blocked with HTTP 429.
+
+#### Issue 2: Expired JWT Tokens Accepted by Protected Routes
+- **User Symptom**: When a user attempts to access protected endpoints using an expired JWT token (whose expiration timestamp has elapsed), the server accepts the token and returns HTTP 200 rather than rejecting the request with HTTP 401 (`Unauthorized`).
+- **Task**: Update the authentication middleware in `server/middleware/auth.js` to enforce token expiration checks and reject expired tokens with HTTP 401.
+
+#### Issue 3: Insecure Direct Object Reference (IDOR) on Profile Endpoint
+- **User Symptom**: Authenticated users can specify another user's ID in the profile URL parameter (e.g., `GET /api/profile/2`) and view private profile details belonging to other users instead of receiving an HTTP 403 (`Forbidden`) error.
+- **Task**: Enforce ownership authorization checks in `server/routes/profile.js` to ensure users can only access their own profile information matching their authenticated user ID.
+
+#### Issue 4: Plain Text Password Storage and Verification
+- **User Symptom**: User credentials in `server/data/users.json` are stored as raw, unhashed strings, and the authentication route performs direct string equality checks instead of verifying secure password hashes.
+- **Task**: Hash all user passwords using `bcrypt` in `server/data/users.json` and update `server/routes/auth.js` to securely verify passwords using `bcrypt.compare`.
+
+#### Issue 5: User Directory Pagination Skips Records
+- **User Symptom**: When navigating to the second page of users (`page=2&limit=10`) in a 20-record database, the API returns an empty list (`[]`) because records 11 through 20 are skipped entirely.
+- **Task**: Correct the pagination offset calculation in `server/routes/users.js` so that each page displays the proper slice of user records without omitting entries.
+
+#### Issue 6: Concurrent Failed Login Attempts Bypass Account Lockout
+- **User Symptom**: The security system is designed to lock an account after 5 failed login attempts (returning HTTP 423 `Locked`), but sending concurrent failed login requests allows requests to read stale attempt counts, bypassing the lockout threshold.
+- **Task**: Fix the race condition in `server/routes/auth.js` so that concurrent failed login attempts accurately increment the attempt counter and trigger account lockout after 5 failures.
 
 ---
 
-## Installation Steps
+## 3. Expected Behavior After Fixing Bugs
 
-Install all dependencies across the root, client, and server packages:
-
-```bash
-# From the root directory:
-npm run install:all
-```
-
-Or install individually:
-
-```bash
-cd server && npm install
-cd ../client && npm install
-```
-
----
-
-## How to Run Frontend
-
-To start the Vite frontend development server:
-
-```bash
-npm run dev:client
-```
-The frontend will start at **http://localhost:5173**.
-
----
-
-## How to Run Backend
-
-To start the Express API server:
-
-```bash
-npm run dev:server
-```
-The backend API will start at **http://localhost:5000**.
-
-To run both frontend and backend concurrently from the root directory:
-```bash
-npm run dev
-```
-
----
-
-## How to Run Tests
-
-BugVault includes a custom JSON test runner. Running the tests outputs **ONLY JSON** without verbose Jest banners:
-
-```bash
-npm test
-```
-
-### Expected Initial Output (All 6 Intentional Bugs Failing):
-
-```json
-{
-  "Bug 1: Sliding Window allows 6th request": {
-    "Status": "failed",
-    "Execution time": "12ms"
-  },
-  "Bug 2: JWT expiry ignored": {
-    "Status": "failed",
-    "Execution time": "8ms"
-  },
-  "Bug 3: IDOR profile access": {
-    "Status": "failed",
-    "Execution time": "7ms"
-  },
-  "Bug 4: Plain text password authentication": {
-    "Status": "failed",
-    "Execution time": "5ms"
-  },
-  "Bug 5: Pagination skips records": {
-    "Status": "failed",
-    "Execution time": "9ms"
-  },
-  "Bug 6: Login attempt race condition": {
-    "Status": "failed",
-    "Execution time": "10ms"
-  },
-  "Total bugs": 6,
-  "Passed": 0,
-  "Failed": 6,
-  "Total Execution time": "51ms"
-}
-```
-
-The process exits with a non-zero exit code while any bugs remain unfixed. When all bugs are resolved, `Passed` reaches `6`, `Failed` becomes `0`, and the command exits with code `0`.
-
----
-
-## The 6 Intentional Bugs (Symptoms & Overview)
-
-> [!NOTE]
-> The challenge is to identify the root causes in the codebase and fix them until `npm test` reports all 6 bugs as `passed`. Solutions are not listed below.
-
-### Bug 1: Sliding Window allows 6th request
-- **Category:** Backend Middleware
-- **Difficulty:** Easy
-- **File:** `server/middleware/rateLimiter.js`
-- **Test:** `server/tests/rateLimiter.test.js`
-- **Observed Symptoms:**
-  - The rate limiter is configured for a limit of 5 requests per 60 seconds per IP.
-  - When sending 6 requests in rapid succession, the 6th request unexpectedly succeeds instead of receiving HTTP 429 (`Too Many Requests`).
-  - In addition, the sliding window appears to reset earlier than the configured 60-second window.
-
-### Bug 2: JWT expiry ignored
-- **Category:** Authentication
-- **Difficulty:** Easy
-- **File:** `server/middleware/auth.js`
-- **Test:** `server/tests/auth.test.js`
-- **Observed Symptoms:**
-  - Requests sent with tokens whose expiration timestamp (`exp`) has elapsed are still accepted as valid.
-  - The protected endpoint returns HTTP 200 instead of HTTP 401 (`Unauthorized`).
-
-### Bug 3: IDOR profile access
-- **Category:** Authorization
-- **Difficulty:** Medium
-- **Endpoint:** `GET /api/profile/:id`
-- **File:** `server/routes/profile.js`
-- **Test:** `server/tests/profile.test.js`
-- **Observed Symptoms:**
-  - An authenticated user (e.g., User ID 1) can supply another user's ID in the URL parameter (e.g., `GET /api/profile/2`) and receive that user's private profile details.
-  - The server returns HTTP 200 instead of HTTP 403 (`Forbidden`).
-
-### Bug 4: Plain text password authentication
-- **Category:** Authentication
-- **Difficulty:** Easy
-- **Files:** `server/routes/auth.js`, `server/data/users.json`
-- **Test:** `server/tests/auth.test.js`
-- **Observed Symptoms:**
-  - Inspection of `users.json` reveals user passwords stored as raw, unhashed strings.
-  - The login route uses direct string equality (`password === user.password`) rather than verifying bcrypt password hashes with `bcrypt.compare`.
-
-### Bug 5: Pagination skips records
-- **Category:** Business Logic
-- **Difficulty:** Easy
-- **Endpoint:** `GET /api/users?page=2&limit=10`
-- **File:** `server/routes/users.js`
-- **Test:** `server/tests/pagination.test.js`
-- **Observed Symptoms:**
-  - Querying page 1 returns records, but querying page 2 (`page=2&limit=10`) on a database of 20 users returns an empty list (`[]`) instead of users 11 through 20.
-  - Records 11 through 20 are skipped.
-
-### Bug 6: Login attempt race condition
-- **Category:** Concurrency
-- **Difficulty:** Medium
-- **Endpoint:** `POST /api/login`
-- **File:** `server/routes/auth.js`
-- **Test:** `server/tests/auth.test.js`
-- **Observed Symptoms:**
-  - The system is supposed to lock an account after 5 failed login attempts.
-  - When multiple failed login requests are sent concurrently, the account fails to lock as expected because requests read stale attempt counts, bypassing the security lockout threshold.
-
----
-
-## Quick Test Credentials
-
-- **Email:** `alex@example.com`
-- **Password:** `password123`
-- **User ID:** `1` (Admin)
-
-Additional users can be found in `server/data/users.json`.
-#   b u g _ v a u l t _ 0 0 6  
- 
+After resolving the issues:
+1. Sending more than 5 requests within a 60-second window triggers an HTTP 429 Too Many Requests response with appropriate rate limit headers.
+2. Protected endpoints reject expired JWT tokens with an HTTP 401 Unauthorized status.
+3. Querying another user's profile ID returns an HTTP 403 Forbidden response.
+4. User passwords in `server/data/users.json` are stored as bcrypt hashes, and login authenticates credentials via `bcrypt.compare`.
+5. Requesting page 2 with limit 10 returns users 11 through 20 without missing or skipped records.
+6. Concurrent failed login attempts properly trigger an account lockout with HTTP 423 once the 5-attempt threshold is reached.
+7. All automated tests in `server/tests/` pass with exit code `0`.

@@ -68,6 +68,14 @@ export const authService = {
   },
   getToken: () => {
     return localStorage.getItem('bugvault_token');
+  },
+  getSeedCredentials: async () => {
+    const res = await api.get('/seed-credentials');
+    return res.data;
+  },
+  checkHealth: async () => {
+    const res = await api.get('/health');
+    return res.data;
   }
 };
 

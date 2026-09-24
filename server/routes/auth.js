@@ -59,6 +59,48 @@ router.post('/login', rateLimiter, async (req, res) => {
   });
 });
 
+// Seed passwords lookup for demo/testing display
+const SEED_PASSWORDS = {
+  1: "password123",
+  2: "terminator2024",
+  3: "davidsecurepass",
+  4: "elenapassword99",
+  5: "wilsonPass!45",
+  6: "mayasecret2024",
+  7: "vancecodebase1",
+  8: "berlinBerlin#8",
+  9: "marcuswright44",
+  10: "shieldDaisy#10",
+  11: "tokyocoding2024",
+  12: "liviataylor99!",
+  13: "andersondistrib2",
+  14: "casablancadev7",
+  15: "brooksvalley2024",
+  16: "algorithmQueen3",
+  17: "cloudengineer#17",
+  18: "dakarSystem2024",
+  19: "riofullstack88",
+  20: "batcaveSecurity1"
+};
+
+// GET /api/seed-credentials - Returns seed accounts for playground testing
+router.get('/seed-credentials', (req, res) => {
+  const credentials = users.map(u => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    password: typeof u.password === 'string' && u.password.startsWith('$2')
+      ? (SEED_PASSWORDS[u.id] || 'password123')
+      : u.password,
+    role: u.role
+  }));
+
+  res.json({
+    total: credentials.length,
+    credentials
+  });
+});
+
 // Helper for test cleanup
 router.resetAttempts = () => {
   failedAttempts.clear();

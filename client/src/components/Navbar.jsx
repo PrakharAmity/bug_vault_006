@@ -34,8 +34,11 @@ export default function Navbar({ user, onLogout }) {
                   <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1">
                     <Bug className="w-3 h-3" /> 6 Active Bugs
                   </span>
+                  <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> API Integrated
+                  </span>
                 </div>
-                <p className="text-xs text-slate-400 hidden sm:block">Debugging Playground</p>
+                <p className="text-xs text-slate-400 hidden sm:block">Full-Stack Debugging Playground</p>
               </div>
             </Link>
           </div>

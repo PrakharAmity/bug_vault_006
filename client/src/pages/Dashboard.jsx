@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Key, Shield, Clock, Terminal, CheckCircle2, AlertTriangle, Bug, Zap, RefreshCw } from 'lucide-react';
+import { User, Key, Shield, Clock, Terminal, CheckCircle2, AlertTriangle, Bug, Zap, RefreshCw, Database, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import RequestCounter from '../components/RequestCounter';
 import { profileService, authService } from '../services/api';
 
@@ -14,6 +14,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [jwtTesting, setJwtTesting] = useState(false);
   const [jwtTestResult, setJwtTestResult] = useState(null);
+  const [seedUsers, setSeedUsers] = useState([]);
+  const [showSeeds, setShowSeeds] = useState(false);
+  const [copiedSeedId, setCopiedSeedId] = useState(null);
 
   useEffect(() => {
     async function loadData() {
@@ -34,6 +37,15 @@ export default function Dashboard() {
         const data = await profileService.getProfile();
         setProfile(data);
         addLog(`Profile loaded for ${data.name} (Role: ${data.role})`, 'success');
+
+        try {
+          const seeds = await authService.getSeedCredentials();
+          if (seeds && seeds.credentials) {
+            setSeedUsers(seeds.credentials);
+          }
+        } catch (e) {
+          console.warn('Could not load seed credentials:', e);
+        }
       } catch (err) {
         addLog('Failed to fetch profile: ' + (err.response?.data?.error || err.message), 'error');
       } finally {
@@ -287,6 +299,76 @@ export default function Dashboard() {
             <p className="text-slate-400 mt-1">Concurrent requests read stale failed attempt counters and bypass lockout.</p>
           </div>
         </div>
+      </div>
+
+      {/* System Seed Accounts & Test Credentials (Backend Integrated) */}
+      <div className="bg-card border border-cardBorder rounded-xl p-5 shadow-sm">
+        <div className="flex items-center justify-between pb-4 border-b border-cardBorder">
+          <div className="flex items-center gap-2">
+            <Database className="w-5 h-5 text-emerald-400" />
+            <h2 className="text-base font-semibold text-white">System Seed Credentials Vault</h2>
+          </div>
+          <button
+            onClick={() => setShowSeeds(!showSeeds)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-colors"
+          >
+            <span>{showSeeds ? 'Hide Credentials' : `Show All ${seedUsers.length || 20} Seed Accounts`}</span>
+            {showSeeds ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+
+        <p className="text-xs text-slate-400 mt-3">
+          These test accounts are populated directly from the backend database (<code className="text-amber-300">server/data/users.json</code>) via the integrated <code className="text-blue-300 font-mono">GET /api/seed-credentials</code> API endpoint. You can use these user IDs to test authorization boundaries and IDOR vulnerabilities.
+        </p>
+
+        {showSeeds && (
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {seedUsers.map((user) => (
+              <div
+                key={user.id}
+                className="p-3 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition-colors text-xs flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-semibold text-white truncate">{user.name}</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 capitalize">
+                      #{user.id} • {user.role.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-300 truncate">
+                    {user.email}
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-400 mt-1 flex items-center gap-1">
+                    <span>Pass:</span>
+                    <code className="text-amber-300 bg-slate-950 px-1 py-0.5 rounded">{user.password}</code>
+                  </div>
+                </div>
+                <div className="mt-3 pt-2 border-t border-slate-800 flex items-center justify-end">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${user.email} / ${user.password}`);
+                      setCopiedSeedId(user.id);
+                      setTimeout(() => setCopiedSeedId(null), 1800);
+                    }}
+                    className="flex items-center gap-1 px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-medium transition-colors"
+                  >
+                    {copiedSeedId === user.id ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

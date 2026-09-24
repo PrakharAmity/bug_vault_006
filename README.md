@@ -11,6 +11,7 @@ BugVault is an interactive full-stack debugging platform and security testing da
 - **Sliding Window Rate Limiter**: Configurable IP-based rate limiting to prevent API abuse, displaying real-time countdowns and remaining request quotas.
 - **User Directory & Pagination**: Browse system users with search filtering, multi-page pagination, and limit controls.
 - **Profile Authorization & Inspection**: View user profile details with role permissions and token claim validation.
+- **Seed Credentials Vault & Quick Testing**: Integrated test credentials explorer providing all 20 seed accounts with one-click autofill for immediate playground experimentation.
 - **Live Metrics & Request Timeline**: Real-time developer dashboard tracking request frequencies, active sessions, and security event logs.
 
 ### Technology Stack
